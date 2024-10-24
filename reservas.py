@@ -3,7 +3,7 @@ import usuarios
 import json
 
 class Reserva:
-    def __init__(self, usuario,
+    def __init__(self, usuario:str,
                  juego,
                  fecha_reserva,
                  fecha_finalizacion ):
