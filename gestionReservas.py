@@ -1,6 +1,4 @@
 # Este archivo servirá para las acciones correspondientes a las reservas de los juegos
-import usuarios
-import reservas
 
 class gestionReservas:
     def __init__(self):
