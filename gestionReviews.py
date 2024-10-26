@@ -1,8 +1,6 @@
 # Este archivo servirá para las acciones correspondientes a las reviews de los juegos
 import os
 import sqlite3 as sql
-con = sql.connect("DataBase.db") # Crea/usa la tabla
-cur = con.cursor()
 from clases import criptografia
 
 class gestionReviews:
