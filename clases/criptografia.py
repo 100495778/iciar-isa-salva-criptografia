@@ -1,9 +1,10 @@
 # este archivo contendrá todas las funciones relacionadas con encriptar.
 import os
 
-from cryptography.hazmat.primitives.ciphers import algorithms, modes
+from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives import hashes
 import os
 
 
@@ -30,10 +31,43 @@ def desencriptado_simetrico(datos_encriptados, key):
     """Esta función desencripta los datos encriptados con AES"""
     initialization_vector = datos_encriptados[:16]      # los primeros 16 bytes de los datos encriptados conrresponden con el iv
 
-    cifrador = Cipher(algorithms.AES(datos_encriptados), modes.CFB(initialization_vector), default_backend())
+    cifrador = Cipher(algorithms.AES(key), modes.CFB(initialization_vector), default_backend())
     desencriptador = cifrador.decryptor()
 
     datos = desencriptador.update(datos_encriptados[16:]) + desencriptador.finalize()
 
     return datos
+
+
+
+def cifrado_asimetrico(datos, clave_publica):
+    """Esta función la usaremos para poder intercambiar las claves simétricas de una forma segura. Usamos la clave
+    pública para encriptar los datos. Usaremos RSA. """
+    # primero serializamos los datos a encriptar (nuestra clave simétrica)
+    datos_cifrar = bytes(datos, 'ascii')
+
+    ciphertext = clave_publica.encrypt(
+        datos_cifrar,
+        padding.OAEP(
+            mgf = padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label = None
+        ))
+
+    return ciphertext
+
+def descifrado_asimetrico(datos_cifrados, clave_privada):
+    """Esta función se usará para conseguir los datos del cifrado asimétrico usando la clave privada del usuario
+    que corresponda. Así descifraremos la clave asimétrica que se necesita para obtener la review que se requiera."""
+
+    datos_descifrados = clave_privada.decrypt(
+        datos_cifrados,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+
+    return datos_descifrados
 
