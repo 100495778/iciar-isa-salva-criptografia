@@ -20,6 +20,8 @@ class Cliente:
         if len(password) < 8:
             # la contraseña es demasiado corta
             raise ValueError("METELE MAS DATA")
+
+        #al crear un usuario le pedimos que repita la contraseña
         if password_rep != password:
             raise ValueError("metele mas datos correctamente")
 
@@ -31,6 +33,7 @@ class Cliente:
                 public_key = private_key.public_key()
                 cur.execute("INSERT INTO usuarios VALUES (?,?,? ?)", (usuario, password, salt, public_key))
 
+            # EL USUARIO introducido ya existe
             except sql.IntegrityError:
                 raise ValueError("ya existe un usuario")
 
@@ -46,4 +49,41 @@ class Cliente:
                     # Para proteger con contraseña, se usa BestAvailableEncryption
                 )
             )
+
+    def comprobar_contraseña_inicio_sesion(self, usuario, password):
+        """metodo que ayuda a comprobar que la contraseña introducida al iniciar sesión
+        corresponde con la del usuario
+        Returnea false en caso de que no coincidan"""
+        cur.execute("select password_hash, salt from usuarios where user=?", (usuario,))
+        rows = cur.fetchall()
+
+        if rows == []:
+            # no hay un usuario con ese nombre
+            return False
+        else:
+            # Si se encuentra al usuario, intenta verificarlo con la contraseña, el token y el salt
+            try:
+                salt = rows[0][1]
+                hash = rows[0][0]
+                #verificar(password, res[0][0], res[0][1])
+                bytes_salt = bytes(salt, 'ascii')
+                #bytes_salt = base64.b64decode(bytes_b64_salt)
+                kdf = Scrypt(
+                    salt=salt,
+                    length=32,
+                    n=2 ** 14,
+                    r=8,
+                    p=1,
+                )
+                # Se devuelven los datos necesarios en la base de datos, la psw ya está encriptada
+                psw = kdf.derive(bytes(password, 'ascii'))
+                if hash == psw:
+                    return True
+                else:
+                    return False
+            except:
+                # Si no se verifica el usuario, returnea False
+
+                return False
+
 
