@@ -3,6 +3,7 @@ import os
 import sqlite3 as sql
 from clases import criptografia
 
+
 class gestionReviews:
     def __init__(self):
         # self.review = []  # creamos una lista vacia donde iran las reviews ?????
@@ -66,7 +67,10 @@ class gestionReviews:
 
     # AHORA LO RELACIONADO CON OBTENER DATOS DE LA BASE DE DATOS Y DEESENCRIPTARLOS -------------------------------
     def retreiveReviewDB(self, usuario):
-        """Este método hace coge la información de la base de datos correspondiente al usuario que la quiera obtener"""
+        """Este método hace coge la información de la base de datos correspondiente al usuario que la quiera obtener
+        :return devuelve lista de diccionarios que contienen información sobre (usuario, juego, review, score y clave simetrica)
+                Habrá "x" diccionarios correspondientes a las "x" reviews que corresponden al usuario "usuario".
+        """
 
         # accedemos a la base de datos
         con = sql.connect("DataBase.db")  # acceso a la tabla
@@ -77,21 +81,57 @@ class gestionReviews:
 
         retrieved_data = cur.fetchall()     # esto nos devuelve una lista de tuplas con todos los datos obtenidos sobre ese usuario
 
-        # Ahora gestionamos esos datos
-        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!        # HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        """ La lista retreived_data tiene:
+                tupla[0] = usuario
+                tupla[1] = juegos
+                tupla[2] = reviews encriptadas
+                tupla[3] = scorings encriptadas
+                tupla[4] = claves simétricas encriptadas
+            Entonces, sabiendo esto vamos a: desencriptar cada elemento de esas 3 columnas con la clave pública 
+            perteneciente al usuario y meterlo todo en una lista de diccionarios para poder acceder más fácil 
+        """
 
+        # desciframos la clave simétrica usando la privada del elemento ?????????????????????????????????????????????
+        # ??????????????????????????????????????????????????? NO SÉ CÓMO ACCEDER AL .PEM ??????????????????????????
+        # ????????????????????????????????????????????????????????????????????????????????????????????????????????
+        # COGER LA CLAVE PRIVADA PORFI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! HACERLO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
 
+        clave_privada = ...
+
+        # Esta lista será una lista de diccionarios. Cada diccionario contendrá información sobre una review en concreto,
+        # por lo que esta lista tendrá x diccionarios, siendo x el número de reviews asociadas a ese usuario
+        datos_utiles = []
+
+        # ahora desciframos las claves simétricas y las vamos metiendo en los diccionarios:
+        for j in retrieved_data[4]:
+            # aprovechamos a meter los datos que no están encriptados
+            usuario_review = retrieved_data[0][j]   # tupla 0 corresponde con la columna usuarios
+            juego_review = retrieved_data[1][j]     # tupla 1 corresponde con la columna juegos
+
+            clave_simetrica = criptografia.descifrado_asimetrico(retrieved_data[4][j], clave_privada)
+
+            # ahora que ya tenemos la clave simétrica podemos acceder a las tuplas de reviews y scores para ir descifrándolas
+            review_cifrada = retrieved_data[2][j]
+            review_descifrada = criptografia.desencriptado_simetrico(review_cifrada, clave_simetrica)
+
+            score_cifrado = retrieved_data[3][j]
+            score_descifrado = criptografia.desencriptado_simetrico(score_cifrado, clave_simetrica)
+
+            dic = {"usuario": usuario_review,
+                   "juego": juego_review,
+                   "review": review_descifrada,
+                   "score": score_descifrado,
+                   "clave_simetrica": clave_simetrica}
+
+            datos_utiles.append(dic)
+
+            j = j+1
+
+        return datos_utiles
 
 
 

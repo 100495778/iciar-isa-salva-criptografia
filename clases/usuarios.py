@@ -8,12 +8,10 @@ import criptografia
 con = sql.connect("base_de_datos.db")
 cur = con.cursor()
 class Cliente:
-    def __init__(self, tipo, dni, nombre, apellido1, apellido2, clave_publica):
+    def __init__(self, tipo, usuario, password, clave_publica):
         super().__init__(self)
-        self.dni = dni
-        self.nomre = nombre
-        self.apellido1 = apellido1
-        self.apellido2 = apellido2
+        self.usuario = usuario
+        self.password = password
         self.clave_publica = clave_publica
 
     def registrarse(self, usuario, password, password_rep):
@@ -21,7 +19,7 @@ class Cliente:
             # la contraseña es demasiado corta
             raise ValueError("METELE MAS DATA")
         if password_rep != password:
-            raise ValueError("metele mas datos correctamente")
+            raise ValueError("Introduce la contraseña correctamente")
 
         else:
             try:
@@ -32,11 +30,12 @@ class Cliente:
                 cur.execute("INSERT INTO usuarios VALUES (?,?,? ?)", (usuario, password, salt, public_key))
 
             except sql.IntegrityError:
-                raise ValueError("ya existe un usuario")
+                raise ValueError("Ya existe un usuario")
 
         # ahora generamos la private key y la guardamos
+
         public_key = private_key.public_key()
-        # hay q alamacenarla en base64 porque asi es el formato .pem
+        # Se alamacena en base 64 porque asi es el formato .pem
         with open("clave_privada.pem", "wb") as archivo_clave:
             archivo_clave.write(
                 private_key.private_bytes(
