@@ -1,7 +1,7 @@
 # Este archivo servirá para las acciones correspondientes a las reviews de los juegos
 import os
 import sqlite3 as sql
-from clases import criptografia
+import criptografia
 
 
 class gestionReviews:

@@ -1,7 +1,6 @@
 # Este archivo se encargará de definir la clase Usuario, con su tipo y funcionalidades
-import os
 import sqlite3 as sql
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 import criptografia
