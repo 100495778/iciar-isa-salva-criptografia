@@ -1,10 +1,5 @@
-# Este archivo se encargará de definir la clase usuarios, con su tipo y funcionalidades
-class Usuario:
-    def __init__(self, tipo):
-        self.tipo = tipo
-
-
-class Cliente(Usuario):
+# Este archivo se encargará de definir la clase Usuario, con su tipo y funcionalidades
+class Cliente:
     def __init__(self, tipo, dni, nombre, apellido1, apellido2):
         super().__init__(self)
         self.dni = dni
