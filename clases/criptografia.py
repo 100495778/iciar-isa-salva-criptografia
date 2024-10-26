@@ -7,6 +7,8 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes
 import os
 
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+
 
 def encriptado_simetrico(datos, key):
     """ Esta funcion encripta los datos usando la clave "key". Se usará el cifrado simétrico AES, ya que es
@@ -71,26 +73,26 @@ def descifrado_asimetrico(datos_cifrados, clave_privada):
 
     return datos_descifrados
 
-    def derivar_pwd_usuario(password):
-        """Función que se encarga de derivar la clave del registro"""
-        # Genera un salt y genera un kdf
-        salt = os.urandom(16)  # generamos un salt aletorio
+def derivar_pwd_usuario(password):
+    """Función que se encarga de derivar la clave del registro"""
+    # Genera un salt y genera un kdf
+    salt = os.urandom(16)  # generamos un salt aletorio
 
-        """kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt,
-            iterations=480000,
-        )"""
-        kdf = Scrypt(
-            salt=salt,
-            length=32,
-            n=2 ** 14,
-            r=8,
-            p=1,
-        )
-        # Se devuelven los datos necesarios en la base de datos, la psw ya está encriptada
-        psw = kdf.derive(bytes(password, 'ascii'))
-        # b64_salt = base64.b64encode(salt) he estado informandome y esto es pa imagenes y pa interfaces
-        # salt_final = b64_salt.decode('ascii')
-        return psw, salt
+    """kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=480000,
+    )"""
+    kdf = Scrypt(
+        salt=salt,
+        length=32,
+        n=2 ** 14,
+        r=8,
+        p=1,
+    )
+    # Se devuelven los datos necesarios en la base de datos, la psw ya está encriptada
+    psw = kdf.derive(bytes(password, 'ascii'))
+    # b64_salt = base64.b64encode(salt) he estado informandome y esto es pa imagenes y pa interfaces
+    # salt_final = b64_salt.decode('ascii')
+    return psw, salt
