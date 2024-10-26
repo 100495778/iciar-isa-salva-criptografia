@@ -6,7 +6,7 @@ Iciar Garcia Izquierdo - 100495789
 # Importante:
 Para ejecutar la aplicación, hay que ejecutar el script "gestionReservas.py"
 ```bash
-python3 ./gestionReservas.py
+python3 ./gestionReviews.py
 ```
 para crear la página base de datos. Esto borra los datos existentes.
 
