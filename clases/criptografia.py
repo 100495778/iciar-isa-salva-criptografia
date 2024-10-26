@@ -71,3 +71,26 @@ def descifrado_asimetrico(datos_cifrados, clave_privada):
 
     return datos_descifrados
 
+    def derivar_pwd_usuario(password):
+        """Función que se encarga de derivar la clave del registro"""
+        # Genera un salt y genera un kdf
+        salt = os.urandom(16)  # generamos un salt aletorio
+
+        """kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=480000,
+        )"""
+        kdf = Scrypt(
+            salt=salt,
+            length=32,
+            n=2 ** 14,
+            r=8,
+            p=1,
+        )
+        # Se devuelven los datos necesarios en la base de datos, la psw ya está encriptada
+        psw = kdf.derive(bytes(password, 'ascii'))
+        # b64_salt = base64.b64encode(salt) he estado informandome y esto es pa imagenes y pa interfaces
+        # salt_final = b64_salt.decode('ascii')
+        return psw, salt
