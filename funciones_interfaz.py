@@ -149,6 +149,7 @@ def signup(event):
 
 
 """Bindeo de botones <-> funciones"""
+
 signup_button_swap.bind("<Button-1>", login_swap_signup)
 login_button_swap.bind("<Button-1>", signup_swap_login)
 
