@@ -10,7 +10,7 @@ import os
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
 
-def encriptado_simetrico(datos, key):
+def cifrado_simetrico(datos, key):
     """ Esta funcion encripta los datos usando la clave "key". Se usará el cifrado simétrico AES, ya que es
     altamente usado, nos permite usar varios tamaños de clave y es muy rápido.
     """
@@ -29,7 +29,7 @@ def encriptado_simetrico(datos, key):
     return initialization_vector, datos_encriptados
 
 
-def desencriptado_simetrico(datos_encriptados, key):
+def descifrado_simetrico(datos_encriptados, key):
     """Esta función desencripta los datos encriptados con AES"""
     initialization_vector = datos_encriptados[:16]      # los primeros 16 bytes de los datos encriptados conrresponden con el iv
 
@@ -96,3 +96,19 @@ def derivar_pwd_usuario(password):
     # b64_salt = base64.b64encode(salt) he estado informandome y esto es pa imagenes y pa interfaces
     # salt_final = b64_salt.decode('ascii')
     return psw, salt
+
+def verificar_pwd_usuario(pass_hash, plain_pass, salt):
+    """Función que se encarga de verificar una clave"""
+
+    kdf = Scrypt(
+        salt=salt,
+        length=32,
+        n=2 ** 14,
+        r=8,
+        p=1,
+    )
+
+    psw = kdf.derive(bytes(plain_pass, 'ascii'))
+    if psw == pass_hash:
+        return True
+    return False

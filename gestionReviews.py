@@ -23,8 +23,8 @@ class gestionReviews:
         # generamos la clave simétrica con la que encriptaremos ambas cosas
         symm_key = os.urandom(32)
 
-        texto_encriptado = criptografia.encriptado_simetrico(texto, symm_key)
-        puntuacion_encriptado = criptografia.encriptado_simetrico(puntuacion, symm_key)
+        texto_encriptado = criptografia.cifrado_simetrico(texto, symm_key)
+        puntuacion_encriptado = criptografia.cifrado_simetrico(puntuacion, symm_key)
 
         # nuestro objeto review ahora tiene los datos correspondientes encriptados
         review.texto = texto_encriptado
@@ -116,10 +116,10 @@ class gestionReviews:
 
             # ahora que ya tenemos la clave simétrica podemos acceder a las tuplas de reviews y scores para ir descifrándolas
             review_cifrada = retrieved_data[2][j]
-            review_descifrada = criptografia.desencriptado_simetrico(review_cifrada, clave_simetrica)
+            review_descifrada = criptografia.descifrado_simetrico(review_cifrada, clave_simetrica)
 
             score_cifrado = retrieved_data[3][j]
-            score_descifrado = criptografia.desencriptado_simetrico(score_cifrado, clave_simetrica)
+            score_descifrado = criptografia.descifrado_simetrico(score_cifrado, clave_simetrica)
 
             dic = {"usuario": usuario_review,
                    "juego": juego_review,
