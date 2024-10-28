@@ -4,7 +4,7 @@ import os
 from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import hashes, serialization
 import os
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
@@ -112,3 +112,28 @@ def verificar_pwd_usuario(pass_hash, plain_pass, salt):
     if psw == pass_hash:
         return True
     return False
+
+def generar_clave_asymm():
+    private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    public_key = private_key.public_key()
+    return public_key, private_key
+
+def guardar_clave_asymm(priv_key):
+    # serializamos la private key
+    pem = priv_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption
+    )
+    #guardamos la clave en el archivo pem
+    with open("private_key_protected.pem", "wb") as key_file:
+        key_file.write(pem)
+
+
+def leer_private_key(path):
+    with open(path, "rb") as key_file:
+        private_key = serialization.load_pem_private_key(
+            key_file.read(),
+            password=None,
+        )
+    return private_key
