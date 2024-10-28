@@ -123,7 +123,7 @@ def guardar_clave_asymm(priv_key):
     pem = priv_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.NoEncryption
+        encryption_algorithm=serialization.NoEncryption()
     )
     #guardamos la clave en el archivo pem
     with open("private_key_protected.pem", "wb") as key_file:

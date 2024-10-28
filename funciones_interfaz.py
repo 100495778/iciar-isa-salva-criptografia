@@ -2,6 +2,8 @@ import tkinter as tk
 import sqlite3 as sql
 from random import randint
 
+from cryptography.hazmat.primitives import serialization
+
 import criptografia as cripto
 
 # Importación de frames
@@ -119,9 +121,14 @@ def signup(event):
 
 	# Se trata de insertar el nuevo usuario en la base de datos
 	try:
+		# Se generan los datos necesarios para la base de datos
 		password_hash, salt = cripto.derivar_pwd_usuario(password)
-		public_key, private_key = cripto.generar_claves_asymm()
-
+		public_key, private_key = cripto.generar_clave_asymm()
+		public_key = public_key.public_bytes(
+			encoding=serialization.Encoding.PEM,
+			format=serialization.PublicFormat.SubjectPublicKeyInfo
+		)
+		print(private_key)
 		# Se insertan los datos en la base de datos
 		cur.execute("INSERT INTO users VALUES(?, ?, ?, ?)", (name, password_hash, salt, public_key))
 		con.commit()
