@@ -77,6 +77,20 @@ def delete_mssg(label):
 	label.place_forget()
 
 
+def logout(event):
+	# Se borran los datos del usuario
+	global user_name, user_public_key
+	user_name = ""
+	user_public_key = ""
+	# Se cierra la sesión
+	frame_mainpage.pack_forget()
+
+	# Se carga el login
+	entry_login_name.delete(0, len(entry_login_name.get()))
+	entry_login_password.delete(0, len(entry_login_password.get()))
+	load_login()
+	return
+
 """Funciones con queries a la base de datos"""
 def login(event):
 	# Se obtienen los datos aportados por el usuario
@@ -183,6 +197,8 @@ def load_game(event):
 	button_send.pack_forget()
 	lab_review.pack_forget()
 	lab_score.pack_forget()
+	lab_review_header.pack_forget()
+	lab_score_header.pack_forget()
 	frame_game.pack()
 
 	cur.execute("SELECT * from games where game = ?", (game_name,))
@@ -199,8 +215,10 @@ def load_game(event):
 	review = oper.retreiveReviewDB(user_name, game_name)
 	if review == []:
 		# Campo de texto para la review:
-		entry_review.pack(side="top", ipadx=260)
-		entry_score.pack(side="top", ipadx=260)
+		lab_review_header.pack(side="top", pady=10)
+		entry_review.pack(side="top", pady=20, ipady=50, ipadx=150)
+		lab_score_header.pack(side="top", pady=10)
+		entry_score.pack(side="top", pady=20, ipady=10, ipadx=50)
 
 		# Botón de enviar review
 		button_send.pack(side="top", ipadx=10, pady=10)
@@ -209,10 +227,10 @@ def load_game(event):
 	else:
 		review_text = "Opinion: " + review[0]["review"]
 		lab_review.config(text=review_text)
-		lab_review.pack(side="top", ipadx=260)
+		lab_review.pack(side="top", ipadx=20, pady=20)
 		score = "Puntuacion: " + review[0]["score"]
 		lab_score.config(text=score)
-		lab_score.pack(side="top", ipadx=260)
+		lab_score.pack(side="top", ipadx=20, pady=20)
 
 	return
 
@@ -235,5 +253,7 @@ def bind():
 		button.bind("<Button-1>", load_game)
 
 	button_return.bind("<Button-1>", returnto_app)
+
+	button_logout.bind("<Button-1>", logout)
 
 	return

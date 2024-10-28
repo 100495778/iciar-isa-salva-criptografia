@@ -13,15 +13,15 @@ button_return.pack(side="bottom", ipadx=10, pady=10)
 button_send = tk.Button(master=frame_game, text="Enviar", fg="Black", font=('Arial', 10, "bold"), bg="#ffb491")
 
 # Datos del juego:
-lab_game_title = tk.Label(master=frame_game, text="", fg="#000001", font=('Arial', 12, "bold"),
-                          bg="#c5fcfc")
+lab_game_title = tk.Label(master=frame_game, text="", fg="#000001", font=('Arial', 12, "bold"), bg="#c5fcfc")
 lab_game_title.pack(side="top", ipadx=300)
-lab_game_info = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"),
-                         bg="#c5fcfc")
-lab_game_info.pack(side="top", ipadx=50)
+lab_game_info = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
+lab_game_info.pack(side="top", ipadx=20)
 
 # Datos variables
+lab_review_header = tk.Label(master=frame_game, text="Opinion:", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
 entry_review = tk.Entry(master=frame_game, width=50)
+lab_score_header = tk.Label(master=frame_game, text="Puntuacion:", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
 entry_score = tk.Entry(master=frame_game, width=50)
-lab_review = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#c5fcfc")
-lab_score = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#c5fcfc")
+lab_review = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
+lab_score = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")

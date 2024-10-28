@@ -20,3 +20,7 @@ juegos = []
 for game in games:
     juegos.append(tk.Button(master=frame_mainpage, text=game[0], fg="Black", font=('Arial', 10, "bold"), bg="#cdd1fa"))
     juegos[-1].pack(side="top", ipadx=300, pady=10)
+
+# Boton de retorno
+button_logout = tk.Button(master=frame_mainpage, text="Cerrar sesion", fg="Black", font=('Arial', 10, "bold"), bg="Red")
+button_logout.pack(side="bottom", ipadx=20, pady=10)
