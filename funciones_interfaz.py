@@ -6,6 +6,7 @@ import criptografia as cripto
 
 # Importación de frames
 from graphics.login import *
+from graphics.main_page import *
 from graphics.signup import *
 from graphics.window import window
 from graphics.transition import frame_transicion, lab_loading
@@ -52,10 +53,9 @@ def account_created():
 	load_login()
 	return
 
-
 def load_app():
 	frame_login.pack_forget()
-	!Falta por hacer!
+	frame_mainpage.pack()
 	return
 
 
@@ -94,6 +94,7 @@ def login(event):
 		window.after(2000, delete_mssg, lab_error_login)
 		return
 
+
 def signup(event):
 	name = entry_signup_name.get()
 	# Se comprueba que el nombre de usuario no esté vacío
@@ -119,7 +120,7 @@ def signup(event):
 	# Se trata de insertar el nuevo usuario en la base de datos
 	try:
 		password_hash, salt = cripto.derivar_pwd_usuario(password)
-		public_key, private_key = cripto.generar_claves_asymm() !Falta por implementar
+		public_key, private_key = cripto.generar_claves_asymm()
 
 		# Se insertan los datos en la base de datos
 		cur.execute("INSERT INTO users VALUES(?, ?, ?, ?)", (name, password_hash, salt, public_key))
@@ -143,6 +144,8 @@ def signup(event):
 		return
 
 
+def load_game(event):
+	pass
 
 
 
@@ -155,6 +158,3 @@ login_button_swap.bind("<Button-1>", signup_swap_login)
 
 login_button.bind("<Button-1>", login)
 signup_button.bind("<Button-1>", signup)
-
-frame_login.pack()
-tk.mainloop()
