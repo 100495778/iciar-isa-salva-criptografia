@@ -144,7 +144,7 @@ def signup(event):
 		con.commit()
 
 		# Si ha salido bien, se guarda la clave privada asimetrica en un archivo
-		cripto.guardar_clave_asymm(private_key)
+		cripto.guardar_clave_asymm(private_key, name)
 
 		# Se muestra un mensaje de éxito y se carga el login para que el usuario inicie sesion
 		frame_signup.pack_forget()

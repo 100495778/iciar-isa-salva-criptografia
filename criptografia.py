@@ -119,7 +119,7 @@ def generar_clave_asymm():
     public_key = private_key.public_key()
     return public_key, private_key
 
-def guardar_clave_asymm(priv_key):
+def guardar_clave_asymm(priv_key, usuario):
     # serializamos la private key
     pem = priv_key.private_bytes(
         encoding=serialization.Encoding.PEM,
@@ -127,7 +127,8 @@ def guardar_clave_asymm(priv_key):
         encryption_algorithm=serialization.NoEncryption()
     )
     #guardamos la clave en el archivo pem
-    with open("private_key_protected.pem", "wb") as key_file:
+    path = usuario + "_private_key.pem"
+    with open(path, "wb") as key_file:
         key_file.write(pem)
 
 
