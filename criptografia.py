@@ -9,6 +9,8 @@ import os
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
+asymm_password = b'DEw0g3}iguGnnrSeAmJ.W2TNqL6E#SZ]'
+
 
 def cifrado_simetrico(datos, key):
     """ Esta funcion encripta los datos usando la clave "key". Se usará el cifrado simétrico AES, ya que es
@@ -124,7 +126,7 @@ def guardar_clave_asymm(priv_key, usuario):
     pem = priv_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
-        encryption_algorithm=serialization.NoEncryption()
+        encryption_algorithm=serialization.BestAvailableEncryption(asymm_password)
     )
     #guardamos la clave en el archivo pem
     path = usuario + "_private_key.pem"
@@ -136,6 +138,6 @@ def leer_private_key(path):
     with open(path, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
-            password=None,
+            password=asymm_password,
         )
     return private_key
