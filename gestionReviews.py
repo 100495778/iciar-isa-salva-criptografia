@@ -2,7 +2,7 @@
 import os
 import sqlite3 as sql
 import criptografia
-
+import criptografia
 
 class gestionReviews:
     def __init__(self):
@@ -100,7 +100,7 @@ class gestionReviews:
         #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡
 
-        clave_privada = ...
+        clave_privada =  criptografia.leer_private_key("private_key_protected.pem")
 
         # Esta lista será una lista de diccionarios. Cada diccionario contendrá información sobre una review en concreto,
         # por lo que esta lista tendrá x diccionarios, siendo x el número de reviews asociadas a ese usuario
