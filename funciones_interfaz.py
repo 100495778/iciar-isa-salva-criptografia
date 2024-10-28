@@ -181,8 +181,8 @@ def send_review(review, public_key):
 	gr_obj = gestionReviews()
 	review, symm_key = gr_obj.encriptarReview(review)
 	symm_key_encrypted = gr_obj.encriptar_symm_key(symm_key, public_key)
-	gr_obj.insertarReviewDB(review, symm_key_encrypted)
-
+	hmac_mensaje = gr_obj.autenticar_review(symm_key, review, review.usuario + review.juego)
+	gr_obj.insertarReviewDB(review, symm_key_encrypted, hmac_mensaje)
 	frame_game.pack_forget()
 	frame_mainpage.pack()
 

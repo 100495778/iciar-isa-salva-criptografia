@@ -42,7 +42,7 @@ class gestionReviews:
         return symm_key_encrypted
 
 
-    def insertarReviewDB(self, review_encriptada, symm_key_encrypted):
+    def insertarReviewDB(self, review_encriptada, symm_key_encrypted, hmac_mensaje):
         """Este método meterá la review ya encriptada en la base de datos, en la tabla de reviews; junto con
         la clave simétrica que permitirá desencriptarla. La clave simétrica también estará encriptada de manera
         asimétrica con la clave pública del destinatario"""
@@ -57,7 +57,7 @@ class gestionReviews:
         con = sql.connect("DataBase.db")  # acceso a la tabla
         cur = con.cursor()
         # insertamos con sqlite3
-        cur.execute("INSERT INTO reviews (user, game, review_encrypted, score_encrypted, review_key) VALUES (?,?,?,?,?)", (usuario, juego, texto, puntuacion, symm_key_encrypted))
+        cur.execute("INSERT INTO reviews (user, game, review_encrypted, score_encrypted, review_key, hmac_text) VALUES (?,?,?,?,?,?)", (usuario, juego, texto, puntuacion, symm_key_encrypted, hmac_mensaje))
 
         # guardamos y terminamos el acceso a la base de datos
         con.commit()
@@ -76,7 +76,7 @@ class gestionReviews:
         cur = con.cursor()
 
         # seleccionamos los datos de las reviews correspondientes al usuario que las requiere
-        cur.execute("SELECT user, game, review_encrypted, score_encrypted, review_key FROM reviews WHERE user = ? AND game = ?", (usuario, game,))
+        cur.execute("SELECT user, game, review_encrypted, score_encrypted, review_key, hmac_text FROM reviews WHERE user = ? AND game = ?", (usuario, game,))
 
         retrieved_data = cur.fetchall()     # esto nos devuelve una lista de tuplas con todos los datos obtenidos sobre ese usuario
 
@@ -111,6 +111,14 @@ class gestionReviews:
             score_cifrado = elem[3]
             score_descifrado = criptografia.descifrado_simetrico(score_cifrado, clave_simetrica)
 
+            # ahora que tenemos todos los datos cifrados podemos pasar a la autentificación
+            hmac_text = elem[5] #texto guardado en la base de datos
+            clave_privada = criptografia.leer_hmac_key(usuario_review + juego_review + "_private_key.pem")
+            #preparamos el mensaje que hemos hecho hmac
+            message = '{} {}'.format(review_cifrada, score_cifrado)
+            message = bytes(str(message), "ascii")
+            criptografia.hmac_verificacion(message, clave_privada, hmac_text)
+
             dic = {"usuario": usuario_review,
                    "juego": juego_review,
                    "review": review_descifrada.decode("utf-8"),
@@ -126,6 +134,17 @@ class gestionReviews:
         symm_key_encrypted = self.encriptar_symm_key(symm_key, public_key)
         self.insertarReviewDB(review, symm_key_encrypted)
 
+    def autenticar_review(self, symm_key, review, usuario):
+        priv_key = os.urandom(32)
 
+        # texto que vamos a comparar para que nada haya sido cambiado
+        message = '{} {}'.format(review.texto, review.puntuacion)
+        message = bytes(str(message), "ascii")
 
+        #funcion que calcula el hmac que será guardado
+        hmac_review = criptografia.hmac_review(message, priv_key, symm_key)
+
+        #guardamos en un archivo aparte la llave privada
+        criptografia.guardar_clave_hmac(priv_key, usuario)
+        return hmac_review
 

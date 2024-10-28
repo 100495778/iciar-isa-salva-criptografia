@@ -31,6 +31,7 @@ cur.execute("""CREATE TABLE reviews(user TEXT,
                                     review_encrypted TEXT,
                                     score_encrypted TEXT,
                                     review_key TEXT,
+                                    hmac_text text,
                                     PRIMARY KEY (user,game),
                                     FOREIGN KEY (user) REFERENCES users(user),
                                     FOREIGN KEY (game) REFERENCES games(game))""")

@@ -1,6 +1,9 @@
 # este archivo contendrá todas las funciones relacionadas con encriptar.
+import base64
+import hashlib
+import hmac
 import os
-
+import logging
 from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
@@ -141,3 +144,48 @@ def leer_private_key(path):
             password=asymm_password,
         )
     return private_key
+
+def leer_hmac_key(path):
+    with open(path, "rb") as key_file:
+        private_key = key_file.read()
+    return private_key
+def guardar_clave_hmac(priv_key, review):
+    # pasamos a base64 la private key para ser almacenada
+    encoded_key = base64.b64encode(priv_key)
+    #guardamos la clave en el archivo pem
+    path = review + "_private_key.pem"
+    with open(path, "wb") as key_file:
+        key_file.write(encoded_key)
+
+def hmac_review(review, priv_key, symm_key):
+    # Configuración del log para mostrar el resultado y detalles
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+    # Crear un HMAC del mensaje usando SHA-256
+    hmac_resultado = hmac.new(priv_key, review, hashlib.sha256).hexdigest()
+
+    # Log del resultado de autenticación, tipo de algoritmo y longitud de clave
+    leng = len(priv_key) * 8
+    logging.debug(f"Resultado de autenticación HMAC:  {hmac_resultado}")
+    logging.debug(f"Algoritmo utilizado: HMAC-SHA-256")
+    logging.debug(f"Longitud de la contraseña: {leng}")
+
+    return hmac_resultado
+
+def hmac_verificacion(mensaje, priv_key, hmac_guardado):
+    #pasamos la clave a la base correcta
+    priv_key = base64.b64decode(priv_key)
+    # cargar el hmac guardado
+    hmac_calculado = hmac.new(priv_key, mensaje, hashlib.sha256).hexdigest()
+
+    leng = len(priv_key) * 8
+    logging.debug(f"Resultado de autenticación HMAC:  {hmac_calculado}")
+    logging.debug("Algoritmo utilizado: HMAC-SHA-256")
+    logging.debug(f"Longitud de la contraseña: {leng}")
+
+    if hmac_guardado == hmac_calculado:
+        logging.info("El mensaje es auténtico y no ha sido alterado.")
+    else:
+        logging.warning("El mensaje puede haber sido alterado.")
+
+
