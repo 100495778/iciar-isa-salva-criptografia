@@ -4,14 +4,18 @@ from random import randint
 
 from cryptography.hazmat.primitives import serialization
 
+from gestionReviews import gestionReviews as gr, gestionReviews
 import criptografia as cripto
+from clases.reviews import Review
 
 # Importación de frames
 from graphics.login import *
 from graphics.main_page import *
 from graphics.signup import *
+from graphics.transition import *
+from graphics.game_review import *
+
 from graphics.window import window
-from graphics.transition import frame_transicion, lab_loading
 
 # Inicialización de base de datos
 con = sql.connect("DataBase.db")
@@ -55,8 +59,15 @@ def account_created():
 	load_login()
 	return
 
+
 def load_app():
 	frame_login.pack_forget()
+	frame_mainpage.pack()
+	return
+
+
+def returnto_app(event):
+	frame_game.pack_forget()
 	frame_mainpage.pack()
 	return
 
@@ -128,7 +139,6 @@ def signup(event):
 			encoding=serialization.Encoding.PEM,
 			format=serialization.PublicFormat.SubjectPublicKeyInfo
 		)
-		print(private_key)
 		# Se insertan los datos en la base de datos
 		cur.execute("INSERT INTO users VALUES(?, ?, ?, ?)", (name, password_hash, salt, public_key))
 		con.commit()
@@ -151,17 +161,79 @@ def signup(event):
 		return
 
 
+def send_review(review, public_key):
+	review.texto = entry_review.get()
+	review.puntuacion = entry_score.get()
+	gr_obj = gestionReviews()
+	review, symm_key = gr_obj.encriptarReview(review)
+	symm_key_encrypted = gr_obj.encriptar_symm_key(symm_key, public_key)
+	gr_obj.insertarReviewDB(review, symm_key_encrypted)
+
+	frame_game.pack_forget()
+	frame_mainpage.pack()
+
+
 def load_game(event):
-	pass
+	game_name = event.widget.cget("text")
+	frame_mainpage.pack_forget()
+	entry_review.delete(0, len(entry_review.get()))
+	entry_score.delete(0, len(entry_score.get()))
+	entry_review.pack_forget()
+	entry_score.pack_forget()
+	button_send.pack_forget()
+	lab_review.pack_forget()
+	lab_score.pack_forget()
+	frame_game.pack()
+
+	cur.execute("SELECT * from games where game = ?", (game_name,))
+	res = cur.fetchall()
+
+	# Datos del juego
+	info = "Publicacion: " + res[0][1] + " | Género: " + res[0][2]
+	game_title = res[0][0]
+	lab_game_title.config(text=game_title)
+	lab_game_info.config(text=info)
+
+	# Se obtienen la review.
+	oper = gestionReviews()
+	review = oper.retreiveReviewDB(user_name, game_name)
+	if review == []:
+		# Campo de texto para la review:
+		entry_review.pack(side="top", ipadx=260)
+		entry_score.pack(side="top", ipadx=260)
+
+		# Botón de enviar review
+		button_send.pack(side="top", ipadx=10, pady=10)
+		rev_obj = Review(usuario=user_name, juego=game_name, texto="", puntuacion="")
+		button_send.bind("<Button-1>", lambda event: send_review(rev_obj, user_public_key))
+	else:
+		review_text = "Opinion: " + review[0]["review"]
+		lab_review.config(text=review_text)
+		lab_review.pack(side="top", ipadx=260)
+		score = "Puntuacion: " + review[0]["score"]
+		lab_score.config(text=score)
+		lab_score.pack(side="top", ipadx=260)
+
+	return
+
+
+
 
 
 
 
 
 """Bindeo de botones <-> funciones"""
+def bind():
+	signup_button_swap.bind("<Button-1>", login_swap_signup)
+	login_button_swap.bind("<Button-1>", signup_swap_login)
 
-signup_button_swap.bind("<Button-1>", login_swap_signup)
-login_button_swap.bind("<Button-1>", signup_swap_login)
+	login_button.bind("<Button-1>", login)
+	signup_button.bind("<Button-1>", signup)
 
-login_button.bind("<Button-1>", login)
-signup_button.bind("<Button-1>", signup)
+	for button in juegos:
+		button.bind("<Button-1>", load_game)
+
+	button_return.bind("<Button-1>", returnto_app)
+
+	return

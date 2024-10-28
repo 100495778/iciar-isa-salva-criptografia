@@ -17,7 +17,7 @@ def cifrado_simetrico(datos, key):
     # Primero pasamos los datos a bytes
     datos_bytes = bytes(datos, 'ascii')
 
-    # definimos el cifrador con la clave simétrica y definimos el vector de inicialización como un número random
+    # definimos el cifrador con la clave simétrica y definimos el vector de inicialización como un número aleatorio
     initialization_vector = os.urandom(16)     # de tamaño de bloque 16 bytes, con lo que trabaja AES
 
     cifrador = Cipher(algorithms.AES(key), modes.CFB(initialization_vector), default_backend())
@@ -26,7 +26,7 @@ def cifrado_simetrico(datos, key):
     # encriptamos los datos
     datos_encriptados = encriptador.update(datos_bytes) + encriptador.finalize()
 
-    return initialization_vector, datos_encriptados
+    return initialization_vector + datos_encriptados
 
 
 def descifrado_simetrico(datos_encriptados, key):
@@ -46,7 +46,8 @@ def cifrado_asimetrico(datos, clave_publica):
     """Esta función la usaremos para poder intercambiar las claves simétricas de una forma segura. Usamos la clave
     pública para encriptar los datos. Usaremos RSA. """
     # primero serializamos los datos a encriptar (nuestra clave simétrica)
-    datos_cifrar = bytes(datos, 'ascii')
+    datos_cifrar = datos
+    clave_publica = serialization.load_pem_public_key(clave_publica, default_backend())
 
     ciphertext = clave_publica.encrypt(
         datos_cifrar,

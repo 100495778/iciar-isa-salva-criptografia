@@ -1,6 +1,4 @@
 # Este archivo definirá la clase de reservas
-import usuarios
-import json
 
 class Review:
     def __init__(self, usuario:str,

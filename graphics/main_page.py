@@ -18,5 +18,5 @@ games = cur.fetchall()
 
 juegos = []
 for game in games:
-    juegos.append(tk.Button(master=frame_mainpage, text=game, fg="Black", font=('Arial', 10, "bold"), bg="#cdd1fa"))
+    juegos.append(tk.Button(master=frame_mainpage, text=game[0], fg="Black", font=('Arial', 10, "bold"), bg="#cdd1fa"))
     juegos[-1].pack(side="top", ipadx=300, pady=10)

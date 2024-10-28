@@ -35,9 +35,12 @@ cur.execute("""CREATE TABLE reviews(user TEXT,
                                     FOREIGN KEY (user) REFERENCES users(user),
                                     FOREIGN KEY (game) REFERENCES games(game))""")
 
-for game in ("Zelda", "Mario", "Pokemon", "Halo", "GTA", "FIFA", "COD", "Fortnite", "Among Us", "Minecraft"):
-    cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "2021-06-01", "Aventura"))
-    con.commit()
+for game in ("Zelda","Pokemon"):
+    cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "2000-06-01", "Aventura"))
+for game in ("Halo", "GTA","COD","Fortnite"):
+    cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "1999-02-12", "FPS"))
+for game in ("Dos Marios","FIFA","Minecraft"):
+    cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "2021-06-01", "Multiplayer"))
 
 con.commit()
 con.close() # commit y cerrar
