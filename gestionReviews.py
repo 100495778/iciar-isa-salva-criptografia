@@ -6,12 +6,11 @@ import criptografia
 
 class gestionReviews:
     def __init__(self):
-        # self.review = []  # creamos una lista vacia donde iran las reviews ?????
         ...
 
-    def crearReview(self, review):
-        # este método se encargará ????
-        ...
+    """def crearReview(self, review):
+        # este método se encargará 
+        ..."""
 
     def encriptarReview(self, review):
         """Este método se encargará de cifrar tanto el texto como el score con una misma clave que se generará
