@@ -210,6 +210,9 @@ def load_game(event):
 	lab_score.pack_forget()
 	lab_review_header.pack_forget()
 	lab_score_header.pack_forget()
+
+	button_ver_reviews.pack(side="top", ipadx=10, pady=10)
+	button_mi_review.pack(side="top", ipadx=10, pady=10)
 	frame_game.pack()
 
 	cur.execute("SELECT * from games where game = ?", (game_name,))
@@ -220,6 +223,15 @@ def load_game(event):
 	game_title = res[0][0]
 	lab_game_title.config(text=game_title)
 	lab_game_info.config(text=info)
+
+	button_mi_review.bind("<Button-1>", lambda event: get_myreview(game_title))
+
+	return
+
+
+def get_myreview(game_name):
+	button_ver_reviews.pack_forget()
+	button_mi_review.pack_forget()
 
 	# Se obtienen la review.
 	oper = gestionReviews()
@@ -243,14 +255,9 @@ def load_game(event):
 		lab_score.config(text=score)
 		lab_score.pack(side="top", ipadx=20, pady=20)
 
-	return
 
-
-
-
-
-
-
+def get_verified_reviews(game_name):
+	pass # todo implementar funcion que muestre las reviews verificadas de un juego
 
 """Bindeo de botones <-> funciones"""
 def bind():

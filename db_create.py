@@ -9,6 +9,7 @@ cur = con.cursor()
 cur.execute("PRAGMA foreign_keys = ON;") # Para bases relacionales
 
 try: # Crear de cero
+    cur.execute("DROP TABLE reviewsVerificadas")
     cur.execute("DROP TABLE reviews")
     cur.execute("DROP TABLE games")
     cur.execute("DROP TABLE users")
@@ -32,6 +33,7 @@ cur.execute("""CREATE TABLE reviews(user TEXT,
                                     score_encrypted TEXT,
                                     review_key TEXT,
                                     hmac_text text,
+                                    verified INTEGER,
                                     PRIMARY KEY (user,game),
                                     FOREIGN KEY (user) REFERENCES users(user),
                                     FOREIGN KEY (game) REFERENCES games(game))""")

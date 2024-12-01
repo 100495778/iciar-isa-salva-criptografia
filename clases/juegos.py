@@ -1,8 +1,7 @@
 class Juego():
-    def __init__(self, nombre, genero, precio, publicacion):
+    def __init__(self, nombre, genero, publicacion):
         self.nombre = nombre
         self.genero = genero
-        self.precio = precio
         self.publicacion = publicacion
 
     def __str__(self):
