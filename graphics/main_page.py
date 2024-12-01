@@ -24,3 +24,7 @@ for game in games:
 # Boton de retorno
 button_logout = tk.Button(master=frame_mainpage, text="Cerrar sesion", fg="Black", font=('Arial', 10, "bold"), bg="Red")
 button_logout.pack(side="bottom", ipadx=20, pady=10)
+
+# Boton de solicitud de certificado
+button_cert_solicitud = tk.Button(master=frame_mainpage, text="Solicitar certificado", fg="Black", font=('Arial', 10, "bold"), bg="Green")
+button_cert_solicitud.pack(side="bottom", ipadx=20, pady=10)

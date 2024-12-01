@@ -136,7 +136,6 @@ def guardar_clave_asymm(priv_key, usuario, user_password):
 
 
 def leer_private_key(path, user_password):
-    print(user_password)
     with open(path, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),

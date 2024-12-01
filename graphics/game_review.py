@@ -21,7 +21,9 @@ lab_game_info.pack(side="top", ipadx=20)
 # Datos variables
 lab_review_header = tk.Label(master=frame_game, text="Opinion:", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
 entry_review = tk.Entry(master=frame_game, width=50)
+
 lab_score_header = tk.Label(master=frame_game, text="Puntuacion:", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
 entry_score = tk.Entry(master=frame_game, width=50)
+
 lab_review = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
 lab_score = tk.Label(master=frame_game, text="", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")

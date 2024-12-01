@@ -38,10 +38,8 @@ cur.execute("""CREATE TABLE reviews(user TEXT,
 
 for game in ("Zelda","Pokemon"):
     cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "2000-06-01", "Aventura"))
-for game in ("Halo", "GTA","COD","Fortnite"):
+for game in ("COD", "Fornait"):
     cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "1999-02-12", "FPS"))
-for game in ("Dos Marios","FIFA","Minecraft"):
-    cur.execute("INSERT INTO games (game, publication, gender) VALUES (?, ?, ?)", (game, "2021-06-01", "Multiplayer"))
 
 con.commit()
 con.close() # commit y cerrar

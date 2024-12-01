@@ -64,6 +64,13 @@ def account_created():
 
 def load_app():
 	frame_login.pack_forget()
+
+	# Comprobar la existencia del certificado
+	if True: # todo: funcion que compruebe la existencia del certificado
+		button_cert_solicitud.pack(side="bottom", ipadx=20, pady=10)
+	else:
+		button_cert_solicitud.pack_forget()
+
 	frame_mainpage.pack()
 	return
 
