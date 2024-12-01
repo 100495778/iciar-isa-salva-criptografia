@@ -21,6 +21,8 @@ from graphics.window import window
 con = sql.connect("DataBase.db")
 cur = con.cursor()
 
+global user_name, user_public_key, user_password
+
 """Funciones auxiliares"""
 def load_signup():
 	frame_signup.pack()
@@ -79,9 +81,10 @@ def delete_mssg(label):
 
 def logout(event):
 	# Se borran los datos del usuario
-	global user_name, user_public_key
+	global user_name, user_public_key, user_password
 	user_name = ""
 	user_public_key = ""
+	user_password = ""
 	# Se cierra la sesión
 	frame_mainpage.pack_forget()
 
@@ -110,8 +113,9 @@ def login(event):
 	# Se comparan los hashes de contraseñas
 	if cripto.verificar_pwd_usuario(res[0][0], password, res[0][1]):
 		# Si las contraseñas coinciden, se carga la aplicación
-		global user_name, user_public_key
+		global user_name, user_public_key, user_password
 		user_name = usuario
+		user_password = password
 		user_public_key = res[0][2]
 		load_app()
 		return
@@ -158,7 +162,7 @@ def signup(event):
 		con.commit()
 
 		# Si ha salido bien, se guarda la clave privada asimetrica en un archivo
-		cripto.guardar_clave_asymm(private_key, name)
+		cripto.guardar_clave_asymm(private_key, name, password)
 
 		# Se muestra un mensaje de éxito y se carga el login para que el usuario inicie sesion
 		frame_signup.pack_forget()
@@ -212,7 +216,7 @@ def load_game(event):
 
 	# Se obtienen la review.
 	oper = gestionReviews()
-	review = oper.retreiveReviewDB(user_name, game_name)
+	review = oper.retreiveReviewDB(user_name, game_name, user_password)
 	if review == []:
 		# Campo de texto para la review:
 		lab_review_header.pack(side="top", pady=10)
