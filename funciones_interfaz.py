@@ -14,6 +14,7 @@ from graphics.main_page import *
 from graphics.signup import *
 from graphics.transition import *
 from graphics.game_review import *
+from graphics.solicitud_certificado import *
 
 from graphics.window import window
 
@@ -80,6 +81,21 @@ def returnto_app(event):
 	frame_mainpage.pack()
 	return
 
+def load_cert_solicitud(event):
+	frame_mainpage.pack_forget()
+	# Limpiar campos
+	entry_nombre.delete(0, len(entry_nombre.get()))
+	entry_pais.delete(0, len(entry_pais.get()))
+	entry_comunidad.delete(0, len(entry_comunidad.get()))
+	entry_localidad.delete(0, len(entry_localidad.get()))
+	frame_solicitud.pack()
+
+def returnto_app_fromcert(event):
+	frame_solicitud.pack_forget()
+	frame_mainpage.pack()
+
+def send_cert_request(event):
+	pass #todo implementar funcion que envie la solicitud de certificado (crear archivo)
 
 def delete_mssg(label):
 	"""Funcion que se encarga de borrar los mensajes de error"""
@@ -273,5 +289,9 @@ def bind():
 	button_return.bind("<Button-1>", returnto_app)
 
 	button_logout.bind("<Button-1>", logout)
+
+	button_cert_solicitud.bind("<Button-1>", load_cert_solicitud)
+	volver_button.bind("<Button-1>", returnto_app_fromcert)
+	send_request_button.bind("<Button-1>", send_cert_request)
 
 	return

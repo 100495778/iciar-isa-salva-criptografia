@@ -14,6 +14,12 @@ Una vez creada la base de datos, se puede ejecutar la aplicación con el script 
 python3 ./main.py
 ```
 
+Para usar certificados, se debe crear antes el certificado de la entidada certificadora,
+ejecutando el script "certificados/AC/generate_admin_cert.py".
+```bash
+python3 ./certificados/AC/generate_admin_cert.py
+```
+
 # Estructura del proyecto:
 Dentro de la carpeta clases se encuentran las clases que se usan para facilitar el manejo de los datos.
 
