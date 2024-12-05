@@ -38,3 +38,23 @@ El tercero contiene las funciones relacionadas con el cifrado de datos y la gene
 
 # Certificados:
 
+**Importante: todo lo siguiente se ejecuta desde "certificados/AC"**
+- Nota: si se usa linux, quizá sea necesario cambiar las barras invertidas por barras normales.
+- Recordar usar el nombre del usuario en lugar de \<usuario\>.
+- Al pedir la contraseña, usar la misma que se usó para crear el certificado de la AC.
+- Una vez generado, se debe "enviar" al usuario (es decir, copiarlo a la carpeta con nombre usuario).
+
+Para verificar datos de la solicitud de certificado una vez creada:
+```bash
+openssl req -in .\requests\<usuario>_csr.pem -text -noout
+```
+
+Para generar un certificado a partir de una solicitud:
+```bash
+openssl x509 -req -in .\requests\<usuario>_csr.pem -CA .\certificates\AC_cert.pem -CAkey .\private\AC_private_key.pem -CAcreateserial .\serial -out .\certificates\<usuario>_cert.pem -days 30 -sha256
+```
+
+Para verificar un certificado:
+```bash
+openssl verify -CAfile .\certificates\AC_cert.pem .\certificates\<usuario>_cert.pem
+```

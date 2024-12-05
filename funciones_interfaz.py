@@ -7,11 +7,13 @@ from cryptography.hazmat.primitives import serialization
 from gestionReviews import gestionReviews as gr, gestionReviews
 import criptografia as cripto
 from clases.reviews import Review
+import certificados as cert
 
 # Importación de frames
 from graphics.login import *
 from graphics.main_page import *
 from graphics.signup import *
+from graphics.transicion_certificado import frame_certificado_creado
 from graphics.transition import *
 from graphics.game_review import *
 from graphics.solicitud_certificado import *
@@ -90,12 +92,16 @@ def load_cert_solicitud(event):
 	entry_localidad.delete(0, len(entry_localidad.get()))
 	frame_solicitud.pack()
 
-def returnto_app_fromcert(event):
+def returnto_app_fromcert():
 	frame_solicitud.pack_forget()
 	frame_mainpage.pack()
 
 def send_cert_request(event):
-	pass #todo implementar funcion que envie la solicitud de certificado (crear archivo)
+	cert.generate_cert_request(user_name, user_password, entry_nombre.get(),
+							   entry_pais.get(), entry_comunidad.get(), entry_localidad.get())
+	frame_solicitud.pack_forget()
+	frame_certificado_creado.pack()
+	window.after(2000, returnto_app_fromcert)
 
 def delete_mssg(label):
 	"""Funcion que se encarga de borrar los mensajes de error"""

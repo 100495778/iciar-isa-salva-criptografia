@@ -11,7 +11,7 @@ def generate_cert_request(user, password, name, pais, comunidad, localidad):
 
 	# Generamos el CSR
 	csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
-		x509.NameAttribute(NameOID.COUNTRY_NAME, pais),
+		x509.NameAttribute(NameOID.COUNTRY_NAME, pais[:2].upper()),
 		x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, comunidad),
 		x509.NameAttribute(NameOID.LOCALITY_NAME, localidad),
 		x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Forojuegos"),
