@@ -12,6 +12,7 @@ try:
     # Create a directory for our AC
     os.mkdir("private")
     os.mkdir("requests")
+    os.mkdir("certificates")
 except FileExistsError:
     print("El directorio ya existe")
 

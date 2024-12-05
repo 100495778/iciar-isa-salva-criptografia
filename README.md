@@ -15,7 +15,8 @@ python3 ./main.py
 ```
 
 Para usar certificados, se debe crear antes el certificado de la entidada certificadora,
-ejecutando el script "certificados/AC/generate_admin_cert.py".
+ejecutando el script "certificados/AC/generate_admin_cert.py" Se pedirá una contraseña, la 
+cual se debe recordar para su posterior uso.
 ```bash
 python3 ./certificados/AC/generate_admin_cert.py
 ```
@@ -34,3 +35,6 @@ El primero contiene las funciones necesarias para la lógica de la interfaz grá
 El segundo contiene las funciones necesarias para extraer y guardar información en la base de datos más comodamente.
 
 El tercero contiene las funciones relacionadas con el cifrado de datos y la generación de claves.
+
+# Certificados:
+
