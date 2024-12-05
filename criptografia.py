@@ -8,10 +8,17 @@ from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes, serialization
-import os
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
+path_certs_folder = "certificados"
+
+def create_dir(user):
+    try:
+        os.mkdir(path_certs_folder + "/" + user)
+    except FileExistsError:
+        print("El directorio ya existe")
+    return
 
 def cifrado_simetrico(datos, key):
     """ Esta funcion encripta los datos usando la clave "key". Se usará el cifrado simétrico AES, ya que es
@@ -130,7 +137,8 @@ def guardar_clave_asymm(priv_key, usuario, user_password):
         encryption_algorithm=serialization.BestAvailableEncryption(bytes(user_password, 'ascii'))
     )
     #guardamos la clave en el archivo pem
-    path = usuario + "_private_key.pem"
+    create_dir(usuario)
+    path = path_certs_folder + "/" + usuario + "/" + "private_key.pem"
     with open(path, "wb") as key_file:
         key_file.write(pem)
 

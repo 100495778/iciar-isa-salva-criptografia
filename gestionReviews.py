@@ -89,7 +89,7 @@ class gestionReviews:
             perteneciente al usuario y meterlo todo en una lista de diccionarios para poder acceder más fácil 
         """
 
-        clave_privada =  criptografia.leer_private_key((usuario + "_private_key.pem"), password)
+        clave_privada =  criptografia.leer_private_key(("certificados/" + usuario + "/" + "private_key.pem"), password)
 
         # Esta lista será una lista de diccionarios. Cada diccionario contendrá información sobre una review en concreto,
         # por lo que esta lista tendrá x diccionarios, siendo x el número de reviews asociadas a ese usuario

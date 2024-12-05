@@ -1,36 +1,36 @@
 import datetime
+import os
+
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes
-from cryptography.x509.oid import NameOID
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization
+from AC_data import AC_name
 
+
+try:
+    # Create a directory for our AC
+    os.mkdir("private")
+    os.mkdir("requests")
+except FileExistsError:
+    print("El directorio ya existe")
 
 # Generate our key
 root_key = ec.generate_private_key(ec.SECP256R1())
 
 # Write our key to disk for safe keeping
-with open("AC_key.pem", "wb") as f:
+with open("private/AC_private_key.pem", "wb") as f:
     f.write(root_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
         encryption_algorithm=serialization.BestAvailableEncryption(bytes(input("Enter password: "), "utf-8")),
     ))
 
-# generate certificate request
-subject = issuer = x509.Name([
-    x509.NameAttribute(NameOID.COUNTRY_NAME, "ES"),
-    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "Comunidad de Madrid"),
-    x509.NameAttribute(NameOID.LOCALITY_NAME, "Leganés"),
-    x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Forojuegos"),
-    x509.NameAttribute(NameOID.COMMON_NAME, "Forojuegos AC"),
-])
-
 # Sign our certificate with our private key
 root_cert = x509.CertificateBuilder().subject_name(
-    subject
+    AC_name
 ).issuer_name(
-    issuer
+    AC_name
 ).public_key(
     root_key.public_key()
 ).serial_number(
@@ -63,5 +63,5 @@ root_cert = x509.CertificateBuilder().subject_name(
 
 # Write our certificate out to disk.
 
-with open("AC_cert.pem", "wb") as f:
+with open("certificates/AC_cert.pem", "wb") as f:
     f.write(root_cert.public_bytes(serialization.Encoding.PEM))
