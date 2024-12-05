@@ -9,8 +9,8 @@ lab_title = tk.Label(master=frame_solicitud, text="Forojuegos", fg="#000001", fo
 lab_title.pack(side="top", ipadx=260)
 
 # Solicitud de certificado - titulo
-lab_game_info = tk.Label(master=frame_solicitud, text="Solicitud de Certificado", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
-lab_game_info.pack(side="top", ipadx=20)
+lab_solicitud_cert = tk.Label(master=frame_solicitud, text="Solicitud de Certificado", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")
+lab_solicitud_cert.pack(side="top", ipadx=20)
 
 # Nombre completo
 lab_nombre = tk.Label(master=frame_solicitud, text="Nombre Completo:", fg="Black", bg="#edd4ff")
