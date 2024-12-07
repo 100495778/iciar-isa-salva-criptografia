@@ -186,12 +186,21 @@ def signup(event):
 			encoding=serialization.Encoding.PEM,
 			format=serialization.PublicFormat.SubjectPublicKeyInfo
 		)
+
+		public_key_firma, private_key_firma = cripto.generar_clave_asymm()
+		public_key_firma = public_key_firma.public_bytes(
+			encoding=serialization.Encoding.PEM,
+			format=serialization.PublicFormat.SubjectPublicKeyInfo
+		)
+
 		# Se insertan los datos en la base de datos
-		cur.execute("INSERT INTO users VALUES(?, ?, ?, ?)", (name, password_hash, salt, public_key))
+		cur.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)", (name, password_hash, salt, public_key, public_key_firma))
 		con.commit()
 
 		# Si ha salido bien, se guarda la clave privada asimetrica en un archivo
 		cripto.guardar_clave_asymm(private_key, name, password)
+
+		cripto.guardar_clave_asymm_firma(private_key_firma, name, password)
 
 		# Se muestra un mensaje de éxito y se carga el login para que el usuario inicie sesion
 		frame_signup.pack_forget()
@@ -215,7 +224,8 @@ def send_review(review, public_key):
 	review, symm_key = gr_obj.encriptarReview(review)
 	symm_key_encrypted = gr_obj.encriptar_symm_key(symm_key, public_key)
 	hmac_mensaje = gr_obj.autenticar_review(symm_key, review, review.usuario + review.juego)
-	gr_obj.insertarReviewDB(review, symm_key_encrypted, hmac_mensaje)
+	firma_mensaje, pub_key_firma = gr_obj.firmar_review(review)
+	gr_obj.insertarReviewDB(review, symm_key_encrypted, hmac_mensaje, firma_mensaje)
 	frame_game.pack_forget()
 	frame_mainpage.pack()
 

@@ -19,6 +19,7 @@ cur.execute("""CREATE TABLE users(  user TEXT,
                                     password_hash TEXT,
                                     salt TEXT,
                                     public_key TEXT,
+                                    pub_key_firma TEXT,
                                     PRIMARY KEY (user))""")
 
 cur.execute("""CREATE TABLE games(  game TEXT,
@@ -33,6 +34,7 @@ cur.execute("""CREATE TABLE reviews(user TEXT,
                                     review_key TEXT,
                                     hmac_text text,
                                     verified INTEGER,
+                                    firma TEXT,
                                     PRIMARY KEY (user,game),
                                     FOREIGN KEY (user) REFERENCES users(user),
                                     FOREIGN KEY (game) REFERENCES games(game))""")

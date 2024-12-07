@@ -3,6 +3,8 @@ import os
 import sqlite3 as sql
 import criptografia
 import criptografia
+from criptografia import generar_firma, verificar_firma
+
 
 class gestionReviews:
     def __init__(self):
@@ -41,7 +43,7 @@ class gestionReviews:
         return symm_key_encrypted
 
 
-    def insertarReviewDB(self, review_encriptada, symm_key_encrypted, hmac_mensaje):
+    def insertarReviewDB(self, review_encriptada, symm_key_encrypted, hmac_mensaje, firma):
         """Este método meterá la review ya encriptada en la base de datos, en la tabla de reviews; junto con
         la clave simétrica que permitirá desencriptarla. La clave simétrica también estará encriptada de manera
         asimétrica con la clave pública del destinatario"""
@@ -56,7 +58,7 @@ class gestionReviews:
         con = sql.connect("DataBase.db")  # acceso a la tabla
         cur = con.cursor()
         # insertamos con sqlite3
-        cur.execute("INSERT INTO reviews (user, game, review_encrypted, score_encrypted, review_key, hmac_text) VALUES (?,?,?,?,?,?)", (usuario, juego, texto, puntuacion, symm_key_encrypted, hmac_mensaje))
+        cur.execute("INSERT INTO reviews (user, game, review_encrypted, score_encrypted, review_key, hmac_text, firma) VALUES (?,?,?,?,?,?,?)", (usuario, juego, texto, puntuacion, symm_key_encrypted, hmac_mensaje, firma))
 
         # guardamos y terminamos el acceso a la base de datos
         con.commit()
@@ -75,7 +77,7 @@ class gestionReviews:
         cur = con.cursor()
 
         # seleccionamos los datos de las reviews correspondientes al usuario que las requiere
-        cur.execute("SELECT user, game, review_encrypted, score_encrypted, review_key, hmac_text FROM reviews WHERE user = ? AND game = ?", (usuario, game,))
+        cur.execute("SELECT user, game, review_encrypted, score_encrypted, review_key, hmac_text, firma FROM reviews WHERE user = ? AND game = ?", (usuario, game,))
 
         retrieved_data = cur.fetchall()     # esto nos devuelve una lista de tuplas con todos los datos obtenidos sobre ese usuario
 
@@ -90,6 +92,8 @@ class gestionReviews:
         """
 
         clave_privada =  criptografia.leer_private_key(("certificados/" + usuario + "/" + "private_key.pem"), password)
+        clave_privada_firma =  criptografia.leer_private_key(("certificados/" + usuario + "/" + "private_key_firma.pem"), password)
+        clave_publica_firma = clave_privada_firma.public_key()
 
         # Esta lista será una lista de diccionarios. Cada diccionario contendrá información sobre una review en concreto,
         # por lo que esta lista tendrá x diccionarios, siendo x el número de reviews asociadas a ese usuario
@@ -117,6 +121,13 @@ class gestionReviews:
             message = '{} {}'.format(review_cifrada, score_cifrado)
             message = bytes(str(message), "ascii")
             criptografia.hmac_verificacion(message, clave_privada, hmac_text)
+
+            # cogemos la firma y verificamos que coincida con el mensaje
+            firma = elem[6]   # texto de la firma
+            messagefirma = '{} {}'.format(review_descifrada, score_descifrado)
+            messagefirma = bytes(str(message), "ascii")
+            criptografia.verificar_firma(firma, messagefirma, clave_publica_firma)
+
 
             dic = {"usuario": usuario_review,
                    "juego": juego_review,
@@ -147,3 +158,11 @@ class gestionReviews:
         criptografia.guardar_clave_hmac(priv_key, usuario)
         return hmac_review
 
+
+    def firmar_review(self, review):
+        message = '{} {}'.format(review.texto, review.puntuacion)
+        message = bytes(str(message), "ascii")
+
+        firma, pub_key = generar_firma(message)
+
+        return firma, pub_key
