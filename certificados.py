@@ -26,7 +26,13 @@ def generate_cert_request(user, password, name, pais, comunidad, localidad):
 	with open("certificados/AC/requests/"+user+"_csr.pem", "wb") as f:
 		f.write(csr.public_bytes(serialization.Encoding.PEM))
 
-
+def request_exists(user):
+	try:
+		with open("certificados/AC/requests/"+user+"_csr.pem", "rb") as f:
+			f.read()
+			return True
+	except FileNotFoundError:
+		return False
 
 def verificar_clave_firma(user, clave_pub_firma):
 	"""Esta función se encarga de cargar el verificado del usuario, obtener la clave pública que

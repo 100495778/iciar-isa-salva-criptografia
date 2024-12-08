@@ -25,7 +25,7 @@ from graphics.window import window
 con = sql.connect("DataBase.db")
 cur = con.cursor()
 
-global user_name, user_public_key, user_password
+global user_name, user_public_key, user_password, cert_requested
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -70,9 +70,9 @@ def account_created():
 
 def load_app():
 	frame_login.pack_forget()
-
+	global cert_requested
 	# Comprobar la existencia del certificado
-	if True: # todo: funcion que compruebe la existencia del certificado
+	if not cert_requested:
 		button_cert_solicitud.pack(side="bottom", ipadx=20, pady=10)
 	else:
 		button_cert_solicitud.pack_forget()
@@ -98,6 +98,12 @@ def load_cert_solicitud(event):
 def returnto_app_fromcert(event):
 	frame_certificado_creado.pack_forget()
 	frame_solicitud.pack_forget()
+	global cert_requested
+	# Comprobar la existencia del certificado
+	if not cert_requested:
+		button_cert_solicitud.pack(side="bottom", ipadx=20, pady=10)
+	else:
+		button_cert_solicitud.pack_forget()
 	frame_mainpage.pack()
 
 def send_cert_request(event):
@@ -105,6 +111,8 @@ def send_cert_request(event):
 							   entry_pais.get(), entry_comunidad.get(), entry_localidad.get())
 	frame_solicitud.pack_forget()
 	frame_certificado_creado.pack()
+	global cert_requested
+	cert_requested = True
 	window.after(2000, returnto_app_fromcert, event)
 
 def delete_mssg(label):
@@ -146,10 +154,11 @@ def login(event):
 	# Se comparan los hashes de contraseñas
 	if cripto.verificar_pwd_usuario(res[0][0], password, res[0][1]):
 		# Si las contraseñas coinciden, se carga la aplicación
-		global user_name, user_public_key, user_password
+		global user_name, user_public_key, user_password, cert_requested
 		user_name = usuario
 		user_password = password
 		user_public_key = res[0][2]
+		cert_requested = cert.request_exists(user_name)
 		load_app()
 		return
 	else:
