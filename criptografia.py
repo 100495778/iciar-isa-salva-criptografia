@@ -144,6 +144,8 @@ def guardar_clave_asymm(priv_key, usuario, user_password):
     with open(path, "wb") as key_file:
         key_file.write(pem)
 
+    return
+
 
 def guardar_clave_asymm_firma(priv_key, usuario, user_password):
     # serializamos la private key
@@ -158,6 +160,8 @@ def guardar_clave_asymm_firma(priv_key, usuario, user_password):
     with open(path, "wb") as key_file:
         key_file.write(pem)
 
+    return
+
 
 def leer_private_key(path, user_password):
     with open(path, "rb") as key_file:
@@ -171,6 +175,7 @@ def leer_hmac_key(path):
     with open(path, "rb") as key_file:
         private_key = key_file.read()
     return private_key
+
 def guardar_clave_hmac(priv_key, review):
     # pasamos a base64 la private key para ser almacenada
     encoded_key = base64.b64encode(priv_key)
@@ -178,6 +183,8 @@ def guardar_clave_hmac(priv_key, review):
     path = review + "_private_key.pem"
     with open(path, "wb") as key_file:
         key_file.write(encoded_key)
+
+    return
 
 def hmac_review(review, priv_key, symm_key):
     # Configuración del log para mostrar el resultado y detalles
@@ -210,6 +217,8 @@ def hmac_verificacion(mensaje, priv_key, hmac_guardado):
     else:
         logging.warning("El mensaje puede haber sido alterado.")
 
+    return
+
 
 
 # para la firma digital vamos a generar un par de claves asimétricas distinto al
@@ -227,7 +236,6 @@ def generar_firma(datos, clave_privada_emisor):
     #objeto_hash.update(bytes(str(datos), 'ascii'))
     objeto_hash.update(datos)   # le pasamos los datos ya directamente en bytes (en gestionReviews)
     hash_mensaje = objeto_hash.finalize()
-    print("Hash del mensaje original: ", hash_mensaje)
 
     # procedemos a firmar
     firma = clave_privada_emisor.sign(
@@ -238,7 +246,6 @@ def generar_firma(datos, clave_privada_emisor):
         ),
         hashes.SHA256()
     )
-    print("Firma generada. Resultado de la firma: ", str(firma))
 
     return firma
 
@@ -252,7 +259,6 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
     #objeto_hash.update(bytes(str(mensaje_recibido), 'ascii'))
     objeto_hash.update(mensaje_recibido)
     hash_mensaje = objeto_hash.finalize()
-    print("Hash del mensaje a comparar: ", hash_mensaje)
 
     try:
         clave_publica_emisor.verify(
@@ -269,10 +275,4 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
     except:
         logging.warning("Firma inválida: El mensaje puede haber sido alterado.")
 
-
-"""
-texto = "hola"
-hash, clave = generar_firma(texto)
-print(hash, "\n", clave)
-verificar_firma(hash, texto, clave)
-"""
+    return

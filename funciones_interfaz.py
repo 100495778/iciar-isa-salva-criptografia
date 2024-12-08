@@ -2,6 +2,7 @@ import tkinter as tk
 import sqlite3 as sql
 from random import randint
 
+import logging
 from cryptography.hazmat.primitives import serialization
 
 from gestionReviews import gestionReviews as gr, gestionReviews
@@ -25,6 +26,8 @@ con = sql.connect("DataBase.db")
 cur = con.cursor()
 
 global user_name, user_public_key, user_password
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 """Funciones auxiliares"""
 def load_signup():
@@ -92,7 +95,7 @@ def load_cert_solicitud(event):
 	entry_localidad.delete(0, len(entry_localidad.get()))
 	frame_solicitud.pack()
 
-def returnto_app_fromcert():
+def returnto_app_fromcert(event):
 	frame_certificado_creado.pack_forget()
 	frame_solicitud.pack_forget()
 	frame_mainpage.pack()
@@ -102,7 +105,7 @@ def send_cert_request(event):
 							   entry_pais.get(), entry_comunidad.get(), entry_localidad.get())
 	frame_solicitud.pack_forget()
 	frame_certificado_creado.pack()
-	window.after(2000, returnto_app_fromcert)
+	window.after(2000, returnto_app_fromcert, event)
 
 def delete_mssg(label):
 	"""Funcion que se encarga de borrar los mensajes de error"""
@@ -225,7 +228,6 @@ def send_review(review, public_key):
 
 	# firmamos sobre los datos no encriptados
 	priv_key_firma = cripto.leer_private_key(("certificados/" + user_name + "/" + "private_key_firma.pem"), user_password)
-	print("AAAAAAAAAAAA: ", priv_key_firma)
 	firma_mensaje = gr_obj.firmar_review(review, priv_key_firma)
 
 	# encriptamos los datos y procedemos a lo demás
@@ -293,10 +295,6 @@ def get_myreview(game_name):
 		score = "Puntuacion: " + review[0]["score"]
 		lab_score.config(text=score)
 		lab_score.pack(side="top", ipadx=20, pady=20)
-
-
-def get_verified_reviews(game_name):
-	pass # todo implementar funcion que muestre las reviews verificadas de un juego
 
 """Bindeo de botones <-> funciones"""
 def bind():

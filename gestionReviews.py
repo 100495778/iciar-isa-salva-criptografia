@@ -95,7 +95,6 @@ class gestionReviews:
         # obtenemos la clave pública con la que vamos a descifrar la firma
         clave_privada_firma =  criptografia.leer_private_key(("certificados/" + usuario + "/" + "private_key_firma.pem"), password)
         clave_publica_firma = clave_privada_firma.public_key()
-        print("BBBBBBBB: ", clave_privada_firma)
         # Esta lista será una lista de diccionarios. Cada diccionario contendrá información sobre una review en concreto,
         # por lo que esta lista tendrá x diccionarios, siendo x el número de reviews asociadas a ese usuario
         datos_utiles = []
@@ -128,8 +127,6 @@ class gestionReviews:
             #messagefirma = '{} {}'.format(review_descifrada, score_descifrado)
             messagefirma = review_descifrada + b' ' + score_descifrado
             #messagefirma = bytes(messagefirma, "ascii")
-            print("Firma recibida. Resultado de la firma: ", str(firma))
-            print("Datos recibidos: ", str(messagefirma))
             criptografia.verificar_firma(firma, messagefirma, clave_publica_firma)
 
 
@@ -168,7 +165,6 @@ class gestionReviews:
         message2 = bytes(str(review.puntuacion), "ascii")
         message = message1 + b' ' + message2
 
-        print("Datos a firmar: ", str(message))
 
         firma = generar_firma(message, clave_privada_emisor)
 
