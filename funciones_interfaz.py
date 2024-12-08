@@ -261,7 +261,6 @@ def load_game(event):
 	lab_review_header.pack_forget()
 	lab_score_header.pack_forget()
 
-	button_ver_reviews.pack(side="top", ipadx=10, pady=10)
 	button_mi_review.pack(side="top", ipadx=10, pady=10)
 	frame_game.pack()
 
@@ -280,7 +279,6 @@ def load_game(event):
 
 
 def get_myreview(game_name):
-	button_ver_reviews.pack_forget()
 	button_mi_review.pack_forget()
 
 	# Se obtienen la review.

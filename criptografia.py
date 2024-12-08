@@ -13,6 +13,8 @@ from cryptography.hazmat.primitives import hashes, serialization
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
+from certificados import verificar_clave_firma
+
 path_certs_folder = "certificados"
 
 def create_dir(user):
@@ -246,10 +248,10 @@ def generar_firma(datos, clave_privada_emisor):
         ),
         hashes.SHA256()
     )
-    logging.info("Algoritmo usado para firmar: SHA256 con RSA \nLongitud de clave utilizada: %s", clave_privada_emisor.key_size )
+    logging.info("Algoritmo usado para firmar: SHA256 con RSA. Longitud de clave utilizada: %s", clave_privada_emisor.key_size )
     return firma
 
-def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
+def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor, usuario):
     """Esta función se encarga de descifrar con la clave pública del emisor la firma,
     hacer un hash con el mensaje que el receptor ha recibido, y comparar ambos
     resultados"""
@@ -270,9 +272,10 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
             ),
             hashes.SHA256()
         )
-        logging.info("Firma válida: Los datos no han sido alterados. El emisor es auténtico.")
-        #logging.info("Algoritmo usado: SHA256 con RSA, Longitud de clave utilizada: %s", )
+        logging.info("Firma válida: Los datos no han sido alterados. El mensaje es auténtico e integro.")
     except:
         logging.warning("Firma inválida: El mensaje puede haber sido alterado.")
+
+    verificar_clave_firma(usuario, clave_publica_emisor)
 
     return

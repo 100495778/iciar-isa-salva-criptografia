@@ -17,7 +17,6 @@ lab_game_info.pack(side="top", ipadx=20)
 
 # Botones de ver reviews y mi review
 button_mi_review = tk.Button(master=frame_game, text="Mi review", fg="Black", font=('Arial', 10, "bold"), bg="#ffb491")
-button_ver_reviews = tk.Button(master=frame_game, text="Ver reviews", fg="Black", font=('Arial', 10, "bold"), bg="#ffb491")
 
 # No hay review
 lab_review_header = tk.Label(master=frame_game, text="Opinion:", fg="Black", font=('Arial', 10, "bold"), bg="#e8fcfc")

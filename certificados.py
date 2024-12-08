@@ -39,8 +39,16 @@ def verificar_clave_firma(user, clave_pub_firma):
 	contiene este verificado, y compararla con la clave pública que usan las funciones de
 	firma. De esta forma tendremos asegurado que la firma tampoco ha podido ser alterada"""
 
-	with open("certificados/AC/requests/"+user+"_csr.pem", "wb") as archivo_certificado:
-		certificado_pem = archivo_certificado.read()
+	try:
+		with open("certificados/"+user+"/"+user+"_cert.pem", "rb") as archivo_certificado:
+			certificado_pem = archivo_certificado.read()
+	except FileNotFoundError:
+		try:
+			with open("certificados/AC/certificates/"+user+"_cert.pem", "rb") as archivo_certificado:
+				certificado_pem = archivo_certificado.read()
+		except FileNotFoundError:
+			logging.warning("No existe el certificado. El autor de la reseña puede no ser auténtico.")
+			return
 
 	certificado_user = load_pem_x509_certificate(certificado_pem, default_backend())
 
@@ -57,7 +65,7 @@ def verificar_clave_firma(user, clave_pub_firma):
 		format=serialization.PublicFormat.SubjectPublicKeyInfo
 	)
 
-	if (clave_firma_pem == clave_certificado_pem):
-		logging.info("La clave utilizada para firmar coincide con el certificado del usuario. Reseña íntegra y auténtica.")
+	if clave_firma_pem == clave_certificado_pem:
+		logging.info("La clave utilizada en la firma digital coincide con la firma del certificado del usuario. Autor de la reseña auténtico.")
 	else:
-		logging.warning("La clave utilizada para firmar no coincide con el certificado del usuario. La reseña puede no ser íntegra o auténtica.")
+		logging.warning("La clave utilizada en la firma digital no coincide con la firma del certificado del usuario. El autor de la reseña puede no ser auténtico.")

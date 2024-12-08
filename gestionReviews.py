@@ -127,7 +127,7 @@ class gestionReviews:
             #messagefirma = '{} {}'.format(review_descifrada, score_descifrado)
             messagefirma = review_descifrada + b' ' + score_descifrado
             #messagefirma = bytes(messagefirma, "ascii")
-            criptografia.verificar_firma(firma, messagefirma, clave_publica_firma)
+            criptografia.verificar_firma(firma, messagefirma, clave_publica_firma, usuario)
 
 
             dic = {"usuario": usuario_review,
