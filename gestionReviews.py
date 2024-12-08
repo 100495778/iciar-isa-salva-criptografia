@@ -116,11 +116,12 @@ class gestionReviews:
 
             # ahora que tenemos todos los datos cifrados podemos pasar a la autentificación
             hmac_text = elem[5] #texto guardado en la base de datos
-            clave_privada = criptografia.leer_hmac_key(usuario_review + juego_review + "_private_key.pem")
+
+            clave_privada_hmac = criptografia.leer_hmac_key(("certificados/" + usuario + "/" + "private_key.pem"),password)
             #preparamos el mensaje que hemos hecho hmac
             message = '{} {}'.format(review_cifrada, score_cifrado)
             message = bytes(message, "ascii")
-            criptografia.hmac_verificacion(message, clave_privada, hmac_text)
+            criptografia.hmac_verificacion(message, clave_privada_hmac, hmac_text)
 
             # cogemos la firma y verificamos que coincida con el mensaje
             firma = elem[6]   # texto de la firma
@@ -145,8 +146,8 @@ class gestionReviews:
         symm_key_encrypted = self.encriptar_symm_key(symm_key, public_key)
         self.insertarReviewDB(review, symm_key_encrypted)
 
-    def autenticar_review(self, symm_key, review, usuario):
-        priv_key = os.urandom(32)
+    def autenticar_review(self, symm_key, priv_key, review, usuario):
+        #priv_key = os.urandom(32)
 
         # texto que vamos a comparar para que nada haya sido cambiado
         message = '{} {}'.format(review.texto, review.puntuacion)
@@ -156,7 +157,7 @@ class gestionReviews:
         hmac_review = criptografia.hmac_review(message, priv_key, symm_key)
 
         #guardamos en un archivo aparte la llave privada
-        criptografia.guardar_clave_hmac(priv_key, usuario)
+        #criptografia.guardar_clave_hmac(priv_key, usuario)
         return hmac_review
 
 

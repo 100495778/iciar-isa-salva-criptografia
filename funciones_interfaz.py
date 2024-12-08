@@ -239,10 +239,13 @@ def send_review(review, public_key):
 	priv_key_firma = cripto.leer_private_key(("certificados/" + user_name + "/" + "private_key_firma.pem"), user_password)
 	firma_mensaje = gr_obj.firmar_review(review, priv_key_firma)
 
+	#clave privada para el hmac
+	priv_key = cripto.leer_hmac_key(("certificados/" + user_name + "/" + "private_key.pem"), user_password)
+
 	# encriptamos los datos y procedemos a lo demás
 	review, symm_key = gr_obj.encriptarReview(review)
 	symm_key_encrypted = gr_obj.encriptar_symm_key(symm_key, public_key)
-	hmac_mensaje = gr_obj.autenticar_review(symm_key, review, review.usuario + review.juego)
+	hmac_mensaje = gr_obj.autenticar_review(symm_key_encrypted, priv_key, review, review.usuario + review.juego)
 	gr_obj.insertarReviewDB(review, symm_key_encrypted, hmac_mensaje, firma_mensaje)
 	frame_game.pack_forget()
 	frame_mainpage.pack()
