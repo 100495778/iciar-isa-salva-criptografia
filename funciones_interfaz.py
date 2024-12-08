@@ -221,10 +221,16 @@ def send_review(review, public_key):
 	review.texto = entry_review.get()
 	review.puntuacion = entry_score.get()
 	gr_obj = gestionReviews()
+
+	# firmamos sobre los datos no encriptados
+	priv_key_firma = cripto.leer_private_key(("certificados/" + user_name + "/" + "private_key_firma.pem"), user_password)
+	print("AAAAAAAAAAAA: ", priv_key_firma)
+	firma_mensaje = gr_obj.firmar_review(review, priv_key_firma)
+
+	# encriptamos los datos y procedemos a lo demás
 	review, symm_key = gr_obj.encriptarReview(review)
 	symm_key_encrypted = gr_obj.encriptar_symm_key(symm_key, public_key)
 	hmac_mensaje = gr_obj.autenticar_review(symm_key, review, review.usuario + review.juego)
-	firma_mensaje, pub_key_firma = gr_obj.firmar_review(review)
 	gr_obj.insertarReviewDB(review, symm_key_encrypted, hmac_mensaje, firma_mensaje)
 	frame_game.pack_forget()
 	frame_mainpage.pack()

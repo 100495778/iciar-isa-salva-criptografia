@@ -8,7 +8,7 @@ from logging import raiseExceptions
 
 from cryptography.hazmat.primitives.ciphers import algorithms, modes, Cipher
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.primitives.asymmetric import rsa, padding, utils
 from cryptography.hazmat.primitives import hashes, serialization
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
@@ -167,14 +167,6 @@ def leer_private_key(path, user_password):
         )
     return private_key
 
-def leer_private_key_firma(path, user_password):
-    with open(path, "rb") as key_file:
-        private_key = serialization.load_pem_private_key(
-            key_file.read(),
-            password=bytes(user_password, 'ascii'),
-        )
-    return private_key
-
 def leer_hmac_key(path):
     with open(path, "rb") as key_file:
         private_key = key_file.read()
@@ -223,17 +215,19 @@ def hmac_verificacion(mensaje, priv_key, hmac_guardado):
 # para la firma digital vamos a generar un par de claves asimétricas distinto al
 # usado para la compartición de la clave secreta
 
-def generar_firma(datos):
+def generar_firma(datos, clave_privada_emisor):
     """Esta función se encarga de generar un par de claves asimétricas, generar un
     hash del mensaje emisor usando SHA-256, y cifrarlo con la clave privada del
     emisor usando RSA"""
 
-    clave_publica_emisor, clave_privada_emisor = generar_clave_asymm()
+    #clave_publica_emisor, clave_privada_emisor = generar_clave_asymm()
 
     # hacemos el hash del mensaje
     objeto_hash = hashes.Hash(hashes.SHA256())
-    objeto_hash.update(bytes(datos, 'ascii'))
+    #objeto_hash.update(bytes(str(datos), 'ascii'))
+    objeto_hash.update(datos)   # le pasamos los datos ya directamente en bytes (en gestionReviews)
     hash_mensaje = objeto_hash.finalize()
+    print("Hash del mensaje original: ", hash_mensaje)
 
     # procedemos a firmar
     firma = clave_privada_emisor.sign(
@@ -244,8 +238,9 @@ def generar_firma(datos):
         ),
         hashes.SHA256()
     )
+    print("Firma generada. Resultado de la firma: ", str(firma))
 
-    return firma, clave_publica_emisor
+    return firma
 
 def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
     """Esta función se encarga de descifrar con la clave pública del emisor la firma,
@@ -254,14 +249,15 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
 
     # calculamos un hash con el mensaje recibido:
     objeto_hash = hashes.Hash(hashes.SHA256())
-    objeto_hash.update(bytes(mensaje_recibido, 'ascii'))
+    #objeto_hash.update(bytes(str(mensaje_recibido), 'ascii'))
+    objeto_hash.update(mensaje_recibido)
     hash_mensaje = objeto_hash.finalize()
+    print("Hash del mensaje a comparar: ", hash_mensaje)
 
     try:
-        # Comprobamos el hash creado con la firma generada con la clave publica del emisor
         clave_publica_emisor.verify(
             datos_firmados,
-            hash_mensaje,
+            mensaje_recibido,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH
@@ -269,10 +265,9 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
             hashes.SHA256()
         )
         logging.info("Firma válida: Los datos no han sido alterados. El emisor es auténtico.")
-        logging.info("Algoritmo usado: SHA256 \nLongitud de clave utilizada:", padding.PSS.MAX_LENGTH)
-
+        logging.info("Algoritmo usado: SHA256, Longitud de clave utilizada: %s", padding.PSS.MAX_LENGTH)
     except:
-        logging.warning("El mensaje puede haber sido alterado: firma inválida.")
+        logging.warning("Firma inválida: El mensaje puede haber sido alterado.")
 
 
 """
