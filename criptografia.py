@@ -246,7 +246,7 @@ def generar_firma(datos, clave_privada_emisor):
         ),
         hashes.SHA256()
     )
-
+    logging.info("Algoritmo usado para firmar: SHA256 con RSA \nLongitud de clave utilizada: %s", clave_privada_emisor.key_size )
     return firma
 
 def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
@@ -271,7 +271,7 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
             hashes.SHA256()
         )
         logging.info("Firma válida: Los datos no han sido alterados. El emisor es auténtico.")
-        logging.info("Algoritmo usado: SHA256, Longitud de clave utilizada: %s", padding.PSS.MAX_LENGTH)
+        #logging.info("Algoritmo usado: SHA256 con RSA, Longitud de clave utilizada: %s", )
     except:
         logging.warning("Firma inválida: El mensaje puede haber sido alterado.")
 
