@@ -257,7 +257,7 @@ def verificar_firma(datos_firmados, mensaje_recibido, clave_publica_emisor):
     try:
         clave_publica_emisor.verify(
             datos_firmados,
-            mensaje_recibido,
+            hash_mensaje,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH
