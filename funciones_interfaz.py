@@ -92,7 +92,7 @@ def load_cert_solicitud(event):
 	entry_localidad.delete(0, len(entry_localidad.get()))
 	frame_solicitud.pack()
 
-def returnto_app_fromcert():
+def returnto_app_fromcert(event):
 	frame_certificado_creado.pack_forget()
 	frame_solicitud.pack_forget()
 	frame_mainpage.pack()
@@ -102,7 +102,7 @@ def send_cert_request(event):
 							   entry_pais.get(), entry_comunidad.get(), entry_localidad.get())
 	frame_solicitud.pack_forget()
 	frame_certificado_creado.pack()
-	window.after(2000, returnto_app_fromcert)
+	window.after(2000, returnto_app_fromcert, event)
 
 def delete_mssg(label):
 	"""Funcion que se encarga de borrar los mensajes de error"""

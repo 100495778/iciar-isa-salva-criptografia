@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 
 def generate_cert_request(user, password, name, pais, comunidad, localidad):
 	# Cargarmos la clave privada
-	with open("certificados/"+user+"/private_key.pem", "rb") as f:
+	with open("certificados/"+user+"/private_key_firma.pem", "rb") as f:
 		private_key = serialization.load_pem_private_key(
 			f.read(),
 			password=bytes(password, 'utf-8'))
