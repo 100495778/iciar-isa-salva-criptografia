@@ -93,6 +93,7 @@ def load_cert_solicitud(event):
 	frame_solicitud.pack()
 
 def returnto_app_fromcert():
+	frame_certificado_creado.pack_forget()
 	frame_solicitud.pack_forget()
 	frame_mainpage.pack()
 
