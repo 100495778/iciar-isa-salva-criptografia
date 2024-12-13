@@ -51,7 +51,7 @@ openssl req -in .\requests\<usuario>_csr.pem -text -noout
 
 Para generar un certificado a partir de una solicitud:
 ```bash
-openssl x509 -req -in .\requests\<usuario>_csr.pem -CA .\certificates\AC_cert.pem -CAkey .\private\AC_private_key.pem -CAcreateserial .\serial -out .\certificates\<usuario>_cert.pem -days 30 -sha256
+openssl x509 -req -in .\requests\<usuario>_csr.pem -CA .\certificates\AC_cert.pem -CAkey .\private\AC_private_key.pem -CAcreateserial -out .\certificates\<usuario>_cert.pem -days 30 -sha256
 ```
 
 Para verificar un certificado:
